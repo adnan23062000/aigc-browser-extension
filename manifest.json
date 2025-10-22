@@ -1,0 +1,12 @@
+{
+"manifest_version": 3,
+"name": "AIGC Tool",
+"version": "1.0.0",
+"description": "A Chrome extension to analyze community-driven indicators on YouTube AIGC",
+"action": {
+"default_title": "AIGC",
+"default_popup": "popup.html"
+},
+"permissions": ["scripting", "activeTab"],
+"host_permissions": ["<all_urls>"]
+}
