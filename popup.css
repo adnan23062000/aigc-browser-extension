@@ -1,35 +1,314 @@
-:root {
-    color-scheme: light dark;
-}
-
-body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+* {
     margin: 0;
-    padding: 12px;
-    width: 220px;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "poppins", sans-serif;
+}
+.header {
+    width: 600px;
+    height: 77px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 19px;
+    gap: 12px;
+    overflow: hidden;
 }
 
-h1 {
-    font-size: 14px;
-    margin: 0 0 8px;
-    font-weight: 600;
+/* YouTube */
+.ytlogo {
+    width: 60px;
+    height: 42px;
+    opacity: 1;
+    object-fit: contain;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
+/* AI */
+.ailogo {
+    width: 90px;
+    height: 99px;
+    opacity: 1;
+    object-fit: contain;
 }
 
-button:active {
-    transform: translateY(1px);
+/* banner */
+.banner {
+    width: 600px;
+    height: 56px;
+    background: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.small {
-    margin-top: 10px;
-    font-size: 11px;
-    opacity: 0.7;
+.banner-slogan {
+    margin: 0;
+    color: #fff;
+    font-weight: 700;
+    font-size: 24px;
 }
+
+/* User sentiment ******************/
+.user-sentiment{
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: start;
+  column-gap: 28px; /* left text ↔ bar */
+  row-gap: 6px;     /* bar ↔ legend less gap */
+  max-width: 720px;
+}
+
+.text-container {
+    margin: 0;
+    padding-top: 34px;
+    padding-left: 32px;
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000;
+    font-style: bold;
+
+}
+
+
+/* Sentiment layout */
+.user-sentiment {
+    width: 600px;
+    background: #fff;
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    gap: 16px;
+    padding: 20px 16px;
+}
+
+.text-container p {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.2;
+    color: #111;
+    margin: 0;
+    width: 136px;
+}
+
+
+/* Section divider line */
+.divider-line {
+    width: calc(100% - 40px);
+    height: 1px;
+    background-color: #999999;
+    margin: 20px auto;
+}
+
+
+
+
+
+
+
+
+
+
+/* seniment bar CSS */
+/* layout tweaks to match two-block design */
+.user-sentiment {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: start;
+  column-gap: 28px; /* text ↔ bar */
+  row-gap: 0;       /*  remove vertical gap */
+  max-width: 720px;
+}
+
+/* left text block */
+.text-container p {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111827;
+}
+
+/* banner look */
+/* .banner { border-top: 4px solid #ef4444; padding-top: 12px; }
+.banner-slogan { margin: 0; color: #111827; font-weight: 600; } */
+
+/* colors */
+:root{
+  --pos: #16a34a;
+  --neu: #9ca3af;
+  --neg: #ef4444;
+  --track-bg:#f4f6f8;
+}
+
+/* segmented bar track */
+.progress-bar {
+  position: relative;
+  height: 42px;
+  width: 300px;
+  background: var(--track-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+}
+
+/* segments inserted by JS */
+.progress-seg {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+.progress-seg:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+.progress-seg:last-child  { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+/* separators between segments (subtle) */
+.progress-seg + .progress-seg::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0;
+  width:4px;
+  background: linear-gradient(to bottom, rgba(255,255,255,.6), rgba(0,0,0,.06));
+  mix-blend-mode: soft-light;
+  opacity:.25;
+}
+
+/* legend under bar: 3-column, percent on top, label below */
+.progress-legend {
+  grid-column: 2 / 3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(80px, 1fr));
+  gap: 10px;
+  margin-top: 0;   /* no extra vertical margin */
+  font-size: 14px;
+  align-items: start;
+}
+
+
+.legend-item{ text-align: left; color:#6b7280; }
+.legend-item b{ display:block; font-size: 24px; font-weight: 400px; line-height:1; margin-bottom: 4px; color:#111827; }
+.legend-item.pos b{ color: var(--pos); }
+.legend-item.neu b{ color: #9ca3af; }
+.legend-item.neg b{ color: var(--neg); }
+
+/* tooltip (gray bubble like the mock) */
+.sentiment-tooltip{
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  background: #e5e7eb;
+  color: #111827;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+  transform: translate(-50%, -125%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .12s ease;
+}
+.sentiment-tooltip.show{ opacity: 1; }
+
+/* triangle pointer */
+.sentiment-tooltip::after{
+  content:"";
+  position:absolute;
+  left:50%; bottom:-6px;
+  transform: translateX(-50%);
+  border:6px solid transparent;
+  border-top-color:#e5e7eb;
+}
+/* end of sentiment bar CSS */
+
+/* ============================================================= */
+
+/* layout similar to the previous two-block section */
+.content-categorization{
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: start;
+  column-gap: 28px;
+  row-gap: 0;
+  max-width: 720px;
+}
+
+/* right side container: scale + badge */
+.cat-scale{
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+/* vertical bar (thermometer style) */
+.thermo{
+  position: relative;
+  height: 120px;
+  width: 15px;
+  border-radius: 5px;
+  margin-left: 16px; /* room for left ticks */
+}
+
+/* stacked bands */
+.band{
+  position: absolute;
+  left: 0; width: 50%; /*<-- half-width -->*/
+}
+.band.safe   { bottom: 0;   height: 34%; background: #16a34a; border-bottom-left-radius: 9px; border-bottom-right-radius: 9px; }
+.band.neutral{ bottom: 34%; height: 33%; background: #fde047; }
+.band.unsafe { top: 0;      height: 33%; background: #ef4444; border-top-left-radius: 9px; border-top-right-radius: 9px; }
+
+/* left-side tick labels */
+.ticks{
+  position: absolute;
+  right: -45px; /* aligns with margin-left above */
+  top: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 12px;
+  line-height: 3;
+}
+.tick.safe{ color:#16a34a; }
+.tick.neutral{ color:#d97706; } /* darker yellow for text */
+.tick.unsafe{ color:#ef4444; }
+
+/* pointer (black small triangle + dot inside track) */
+.indicator{
+  position: absolute;
+  right: 100%;
+  transform: translate(-4px, -50%); /* fine-tuned via JS for Y */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.indicator .dot{
+  width: 14px; height: 14px; border-radius: 50%;
+  /* background: #ffffff; box-shadow: 0 0 0 2px rgba(0,0,0,.25); */
+}
+.indicator .arrow{
+  width: 0; height: 0;
+  border-left: 8px solid #000;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+/* badge on the right */
+.cat-badge{
+  padding: 16px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+  color: #7f1d1d;   
+  background: #fecaca;   
+  min-height: 64px;
+  max-width: 220px;
+  display: grid;
+  place-items: center;
+}
+
+/* badge color variants */
+.cat-badge.safe   { color:#065f46; background:#bbf7d0; }
+.cat-badge.neutral{ color:#92400e; background:#fde68a; }
+.cat-badge.unsafe { color:#7f1d1d; background:#fecaca; }

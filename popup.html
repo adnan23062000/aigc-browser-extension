@@ -4,18 +4,85 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="popup.css">
     <title>AIGC</title>
+    <link rel="stylesheet" href="/popup.css" />
+    <script src="popup.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <h1>YouTube AIGC</h1>
-    <button id="toggle-reader">Toggle Reader Styles</button>
-    <h1>Hello!! testing</h1>
-    <p>testing</p>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, magni.</p>
-    <div class="small">Toggles a simple, reversible stylesheet on the active tab.</div>
-    <script src="popup.js"></script>
-</body>
+    <!-- header yt ai logo  -->
+    <header class="header">
+        <img src="assets/youtube.png" alt="YouTube Logo" class="ytlogo" />
+        <img src="assets/ai.png" alt="AI Logo" class="ailogo" />
+    </header>
 
-</html
+    <!-- ============================================= -->
+    <!-- banner / slogan section  -->
+    <section class="banner">
+        <p class="banner-slogan">This is an AI Generated Content</p>
+    </section>
+    <!-- ============================================== -->
+    <!-- your existing layout -->
+    <section class="user-sentiment">
+        <div class="text-container">
+            <p>General User <br>Sentiment</p>
+        </div>
+
+        <!-- JS will inject the segments inside this .progress-bar -->
+        <div class="progress-bar" id="sentimentBar"></div>
+
+        <!-- legend under the bar (percent + label like your reference) -->
+        <div class="progress-legend" id="sentimentLegend" aria-hidden="false"></div>
+    </section>
+
+    <!-- global tooltip -->
+    <div id="sentimentTooltip" class="sentiment-tooltip" aria-hidden="true"></div>
+
+    <!-- ======================================================= -->
+
+    <div class="divider-line"></div>
+
+    <!-- ================================================== -->
+
+    <!-- Content categorization Block-->
+ <!-- Content Categorization block (drop-in fragment) -->
+<section class="content-categorization">
+  <div class="text-container">
+    <p>Content <br>Categorization</p>
+  </div>
+
+  <div class="cat-scale" id="catScale">
+    <div class="thermo" id="catThermo" role="img" aria-label="Content safety scale">
+      <div class="band safe"></div>
+      <div class="band neutral"></div>
+      <div class="band unsafe"></div>
+
+      <!-- pointer/indicator (positioned by JS with score 0..1) -->
+      <div class="indicator" id="catPointer" aria-hidden="true">
+        <span class="dot"></span>
+        <span class="arrow"></span>
+      </div>
+
+      <!-- labels on the left side of the bar -->
+      <div class="ticks">
+          <span class="tick unsafe">Unsafe</span>
+          <span class="tick neutral">Neutral</span>
+          <span class="tick safe">Safe</span>
+      </div>
+    </div>
+
+    <!-- badge on the right side -->
+    <div class="cat-badge" id="catBadge"></div>
+  </div>
+</section>
+    <!-- ================================================== -->
+
+    <div class="divider-line"></div>
+        
+
+</html>

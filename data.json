@@ -1,0 +1,39 @@
+{
+  "ai_generated": true,
+  "ai_banner_text": "This is an AI Generated Content",
+  "sentiment": {
+    "positive": 0.71,
+    "neutral": 0.1,
+    "negative": 0.19,
+    "hint": "Positive meaning"
+  },
+  "categorization": {
+    "label": "Falsified Content",
+    "score": 0.85,
+    "scale": "unsafe"
+  },
+  "audience": {
+    "rating": "TV-Y7",
+    "segment": "Low-resource Communities"
+  },
+  "consensus": {
+    "label": "High (Negative)",
+    "summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist\u2019s voice and craft.",
+    "full_summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to Carlin\u2019s voice and craft. Community refs are mostly news/legal links calling out the release and lawsuit, not technical citations \u2014 refs present but external-media\u2013driven. Example: The Guardian + Newsweek + The Hollywood Reporter."
+  },
+  "risks": "exploitation of a deceased artist\u2019s likeness, misleading provenance (is it \u201cAI\u201d or human-written + voice clone?), and mass reuploads for engagement.",
+  "links": [
+    {
+      "title": "The Guardian",
+      "url": "#"
+    },
+    {
+      "title": "Newsweek",
+      "url": "#"
+    },
+    {
+      "title": "The Hollywood Reporter",
+      "url": "#"
+    }
+  ]
+}
