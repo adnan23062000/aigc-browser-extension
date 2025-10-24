@@ -2,87 +2,150 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AIGC</title>
-    <link rel="stylesheet" href="/popup.css" />
-    <script src="popup.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AIGC</title>
+  <link rel="stylesheet" href="/popup.css" />
+  <script src="popup.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
-    <!-- header yt ai logo  -->
-    <header class="header">
-        <img src="assets/youtube.png" alt="YouTube Logo" class="ytlogo" />
-        <img src="assets/ai.png" alt="AI Logo" class="ailogo" />
-    </header>
+  <!-- header yt ai logo  -->
+  <header class="header">
+    <img src="assets/youtube.png" alt="YouTube Logo" class="ytlogo" />
+    <img src="assets/ai.png" alt="AI Logo" class="ailogo" />
+  </header>
 
-    <!-- ============================================= -->
-    <!-- banner / slogan section  -->
-    <section class="banner">
-        <p class="banner-slogan">This is an AI Generated Content</p>
-    </section>
-    <!-- ============================================== -->
-    <!-- your existing layout -->
-    <section class="user-sentiment">
-        <div class="text-container">
-            <p>General User <br>Sentiment</p>
+  <!-- ============================================= -->
+  <!-- banner / slogan section  -->
+  <section class="banner">
+    <p class="banner-slogan">This is an AI Generated Content</p>
+  </section>
+  <!-- ============================================== -->
+  <!-- your existing layout -->
+  <section class="user-sentiment">
+    <div class="text-container">
+      <p>General User <br>Sentiment</p>
+    </div>
+
+    <!-- JS will inject the segments inside this .progress-bar -->
+    <div class="progress-bar" id="sentimentBar"></div>
+
+    <!-- legend under the bar (percent + label like your reference) -->
+    <div class="progress-legend" id="sentimentLegend" aria-hidden="false"></div>
+  </section>
+
+  <!-- global tooltip -->
+  <div id="sentimentTooltip" class="sentiment-tooltip" aria-hidden="true"></div>
+
+  <!-- ======================================================= -->
+
+  <div class="divider-line"></div>
+
+  <!-- ================================================== -->
+
+  <!-- Content categorization Block-->
+  <!-- Content Categorization block (drop-in fragment) -->
+  <section class="content-categorization">
+    <div class="text-container">
+      <p>Content <br>Categorization</p>
+    </div>
+
+    <div class="cat-scale" id="catScale">
+      <div class="thermo" id="catThermo" role="img" aria-label="Content safety scale">
+        <div class="band safe"></div>
+        <div class="band neutral"></div>
+        <div class="band unsafe"></div>
+
+        <!-- pointer/indicator (positioned by JS with score 0..1) -->
+        <div class="indicator" id="catPointer" aria-hidden="true">
+          <span class="dot"></span>
+          <span class="arrow"></span>
         </div>
 
-        <!-- JS will inject the segments inside this .progress-bar -->
-        <div class="progress-bar" id="sentimentBar"></div>
-
-        <!-- legend under the bar (percent + label like your reference) -->
-        <div class="progress-legend" id="sentimentLegend" aria-hidden="false"></div>
-    </section>
-
-    <!-- global tooltip -->
-    <div id="sentimentTooltip" class="sentiment-tooltip" aria-hidden="true"></div>
-
-    <!-- ======================================================= -->
-
-    <div class="divider-line"></div>
-
-    <!-- ================================================== -->
-
-    <!-- Content categorization Block-->
- <!-- Content Categorization block (drop-in fragment) -->
-<section class="content-categorization">
-  <div class="text-container">
-    <p>Content <br>Categorization</p>
-  </div>
-
-  <div class="cat-scale" id="catScale">
-    <div class="thermo" id="catThermo" role="img" aria-label="Content safety scale">
-      <div class="band safe"></div>
-      <div class="band neutral"></div>
-      <div class="band unsafe"></div>
-
-      <!-- pointer/indicator (positioned by JS with score 0..1) -->
-      <div class="indicator" id="catPointer" aria-hidden="true">
-        <span class="dot"></span>
-        <span class="arrow"></span>
-      </div>
-
-      <!-- labels on the left side of the bar -->
-      <div class="ticks">
+        <!-- labels on the left side of the bar -->
+        <div class="ticks">
           <span class="tick unsafe">Unsafe</span>
           <span class="tick neutral">Neutral</span>
           <span class="tick safe">Safe</span>
+        </div>
       </div>
+
+      <!-- badge on the right side -->
+      <div class="cat-badge" id="catBadge"></div>
+    </div>
+  </section>
+  <!-- ================================================== -->
+
+  <div class="divider-line"></div>
+  <!-- =======================================================      -->
+
+  <!-- Target Audience & Age Appropriateness -->
+  <section class="audience-block">
+    <div class="text-container-big">
+      <p>Target Audience & Age <br> Appropriateness</p>
     </div>
 
-    <!-- badge on the right side -->
-    <div class="cat-badge" id="catBadge"></div>
-  </div>
-</section>
-    <!-- ================================================== -->
+    <!-- Right card (icon + segment text) -->
+    <div class="aud-card" id="audCard">
+      <div class="aud-icon">
+        <img id="audRatingIcon" src="assets/tv_parental_icon/TV-Y7.svg" alt="TV Parental Rating: TV-Y7" />
+      </div>
+      <div class="aud-segment">
+        <span id="audSegment">Low-resource<br>Communities</span>
+      </div>
+    </div>
+  </section>
+  <!-- ======================================================= -->
+  <div class="divider-line"></div>
+  <!-- =======================================================      -->
 
-    <div class="divider-line"></div>
-        
+  <!-- Comment Summary -->
+  <section class="comment-summary">
+    <div class="text-container-last">
+      <p>Comment<br>Summary</p>
+    </div>
+
+    <div class="cs-panel">
+      <!-- Consensus card -->
+      <article class="cs-card" aria-labelledby="csHeading">
+        <header class="cs-header">
+          <span id="csHeading">Generated Consensus:</span>
+          <strong id="csLabel">—</strong>
+        </header>
+
+        <p class="cs-body" id="csSummary">—</p>
+
+        <button class="cs-btn" id="csToggle" type="button" aria-expanded="false">
+          Show Full Summary
+        </button>
+
+        <div class="cs-divider" role="separator" aria-hidden="true"></div>
+
+        <div class="cs-feedback">
+          <span class="cs-help">Is this summary helpful?</span>
+          <button class="cs-pill" id="csRate" type="button">Rate it</button>
+        </div>
+
+        <!-- <footer class="cs-footer">About this</footer> -->
+      </article>
+
+      <!-- Risks -->
+      <aside class="cs-risk" id="csRisk" aria-live="polite"></aside>
+
+      <!-- Related links -->
+      <section class="cs-links">
+        <div class="cs-links-title">Related links</div>
+        <ul class="cs-links-list" id="csLinks"></ul>
+      </section>
+    </div>
+  </section>
+  <!-- ======================================================= -->
+  <div class="divider-line"></div>
 
 </html>

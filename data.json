@@ -25,15 +25,15 @@
   "links": [
     {
       "title": "The Guardian",
-      "url": "#"
+      "url": "https://www.theguardian.com/international"
     },
     {
-      "title": "Newsweek",
-      "url": "#"
+      "title": "Youtube",
+      "url": "https://www.youtube.com/"
     },
     {
       "title": "The Hollywood Reporter",
-      "url": "#"
+      "url": "http://hollywoodreporter.com/"
     }
   ]
 }
