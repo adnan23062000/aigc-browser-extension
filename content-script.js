@@ -22,10 +22,10 @@
     const css = `
       #${OVERLAY_ID}{
         position: fixed; inset: 0; z-index: 2147483647;
-        background: transparent;                 /* backdrop চাইলে rgba(0,0,0,.28) */
-        display: none; align-items: flex-start;  /* top */
-        justify-content: flex-end;               /* right */
-        padding: 10px 12px 0 0;                  /* icon-এর নিচে সামান্য gap */
+        background: transparent; 
+        display: none; align-items: flex-start; 
+        justify-content: flex-end; 
+        padding: 10px 12px 0 0; 
       }
       #${OVERLAY_ID}.show{ display: flex; }
 

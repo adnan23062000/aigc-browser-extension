@@ -1,27 +1,69 @@
 {
   "ai_generated": true,
+  "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "title": "George Carlin - AI Generated Comedy Special",
   "ai_banner_text": "This is an AI Generated Content",
   "sentiment": {
-    "positive": 0.71,
+    "positive": 0.19,
     "neutral": 0.1,
-    "negative": 0.19,
-    "hint": "Positive meaning"
+    "negative": 0.71,
+    "hint": "Positive meaning",
+    "labels": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    },
+    "tooltip": {
+      "positive": "Positive means viewers find this content good and useful",
+      "neutral": "Neutral means mixed audience reactions",
+      "negative": "Negative means viewers find the content harmful or low-quality"
+    },
+    "format": {
+      "show_percent": true,
+      "precision": 0
+    }
   },
   "categorization": {
     "label": "Falsified Content",
-    "score": 0.85,
-    "scale": "unsafe"
+    "score": 0.25,
+    "scale": "unsafe",
+    "information_icon": "High confidence this video is Falsified Content",
+    "ui": {
+      "headline_prefix": "This Content is a",
+      "badge_style": "pill",
+      "risk_gauge": {
+        "scale_labels": [
+          "Unsafe",
+          "Neutral",
+          "Safe"
+        ],
+        "pointer": 0.15
+      },
+      "info_tooltip": "Classification based on community and model confidence signals"
+    }
   },
   "audience": {
-    "rating": "TV-Y7",
-    "segment": "Low-resource Communities"
+    "rating": "TV-Y",
+    "segment": "Low-resource Communities",
+    "copy": {
+      "section_title": "This Content is appropriate for:"
+    }
   },
   "consensus": {
     "label": "High (Negative)",
-    "summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist\u2019s voice and craft.",
-    "full_summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to Carlin\u2019s voice and craft. Community refs are mostly news/legal links calling out the release and lawsuit, not technical citations \u2014 refs present but external-media\u2013driven. Example: The Guardian + Newsweek + The Hollywood Reporter."
+    "summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist’s voice and craft.",
+    "full_summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to Carlin’s voice and craft. Community refs are mostly news/legal links calling out the release and lawsuit, not technical citations — refs present but external-media–driven. Example: The Guardian + Newsweek + The Hollywood Reporter.",
+    "ui": {
+      "section_title": "Summary of what the Community is thinking about the Content",
+      "expandable": true,
+      "followup_question": "What does this consensus mean regarding content credibility?",
+      "about_accordion": {
+        "title": "About this",
+        "body": "This summary is based on community comment signals, review text, and reported sources."
+      }
+    }
   },
-  "risks": "exploitation of a deceased artist\u2019s likeness, misleading provenance (is it \u201cAI\u201d or human-written + voice clone?), and mass reuploads for engagement.",
+  "risks": "Exploitation of a deceased artists likeness, misleading provenance (is it 'AI' or human-written + voice clone?), and mass reuploads for engagement.",
   "links": [
     {
       "title": "The Guardian",
@@ -35,5 +77,33 @@
       "title": "The Hollywood Reporter",
       "url": "http://hollywoodreporter.com/"
     }
-  ]
+  ],
+  "risk_panel": {
+    "title": "Risk Patterns in the Content",
+    "content_scripts": "Use of a deceased artist’s likeness Misleading provenance of content origin Mass reuploads for engagement"
+  },
+  "references": {
+    "note": "Related references and citations provided by community:",
+    "list": [
+      {
+        "title": "The Guardian",
+        "url": "https://www.theguardian.com/international"
+      },
+      {
+        "title": "The Hollywood Reporter",
+        "url": "http://hollywoodreporter.com/"
+      }
+    ]
+  },
+  "banner_v2": {
+    "is_ai_generated_flag": {
+      "true_text": "This is an AI Generated Content",
+      "false_text": "This is not an AI Generated Content"
+    },
+    "styles": {
+      "ai_true_bg": "#dc2626",
+      "ai_false_bg": "#16a34a",
+      "text_color": "#ffffff"
+    }
+  }
 }
