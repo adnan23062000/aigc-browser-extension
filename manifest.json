@@ -1,29 +1,44 @@
 {
-  "manifest_version": 3,
-  "name": "AIGC Tool",
-  "version": "1.2.1",
-  "description": "Show popup only on YouTube pages (watch/shorts).",
-  "action": {
-    "default_title": "AIGC",
-    "default_popup": "popup.html"
-  },
-  "background": {
-    "service_worker": "bg.js",
-    "type": "module"
-  },
-  "permissions": ["tabs", "webNavigation"],
-  "host_permissions": ["https://www.youtube.com/*"],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "popup.html",
-        "popup.css",
-        "popup.js",
-        "data.json",
-        "assets/*",
-        "assets/**"
-      ],
-      "matches": ["*://*/*"]
-    }
-  ]
+    "manifest_version": 3,
+    "name": "AIGC Tool",
+    "version": "1.0.0",
+    "description": "A Chrome extension to analyze community-driven indicators on YouTube AIGC",
+    "action": {
+        "default_title": "AIGC"
+    },
+    "background": {
+        "service_worker": "bg.js"
+    },
+    "permissions": [
+        "tabs"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content-script.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "popup.html",
+                "popup.css",
+                "popup.js",
+                "data.json",
+                "assets/*",
+                "assets/**"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
 }
