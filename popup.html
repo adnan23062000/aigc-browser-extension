@@ -21,7 +21,6 @@
     <img src="assets/youtube.png" alt="YouTube Logo" class="ytlogo" />
     <img src="assets/ai.png" alt="AI Logo" class="ailogo" />
     <h2 id="videoTitle">"I'm Glad I'm Dead" Full Special – Fake George Carlin</h2>
-
   </header>
 
   <!-- =================== Banner =================== -->
@@ -34,7 +33,7 @@
 
     <!-- ===== Left: Sentiment ===== -->
     <section class="user-sentiment compact">
-      <h3 class="section-heading">General Viewers’ Sentiment</h3>
+      <h3 class="section-heading">General Viewers Sentiment</h3>
       <div class="progress-wrapper">
         <div class="progress-bar" id="sentimentBar"></div>
         <div class="progress-legend" id="sentimentLegend" aria-hidden="false"></div>
@@ -72,12 +71,11 @@
 
   </section>
 
-
   <div class="divider-line"></div>
 
   <!-- =================== Comment Summary =================== -->
   <section class="comment-summary-wide">
-    <h3 class="section-heading">Summary of the Community is thinking about</h3>
+    <h3 class="section-heading" style="padding: 0; margin: 0;font-weight: bold; font-size: 12px;">Summary of the Community is thinking about</h3>
 
     <article class="cs-card" aria-labelledby="csHeading">
       <header class="cs-header">
@@ -85,13 +83,13 @@
         <strong id="csLabel">High (Negative)</strong>
       </header>
 
+      <!-- See more link is now inline inside cs-body -->
       <p class="cs-body" id="csSummary">
         Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist’s voice and craft.
+        <span class="see-more" id="seeMoreLink">See more</span>
       </p>
 
-      <button class="cs-btn" id="csToggle" type="button" aria-expanded="false">
-        Show Full Summary
-      </button>
+      <!-- removed the old button: #csToggle -->
 
       <details class="cs-about">
         <summary>About this</summary>
@@ -116,7 +114,6 @@
       </div>
     </aside>
 
-
     <!-- =================== Related Links =================== -->
     <section class="cs-links">
       <div class="cs-links-title">Related references and citations provided by community:</div>
@@ -128,7 +125,7 @@
 
   <!-- =================== Audience =================== -->
   <section class="audience-block-wide">
-    <h3 class="section-heading">This Content is appropriate for:</h3>
+    <h3 class="section-heading" style="font-size: 13px; font-weight: bold;">This Content is appropriate for:</h3>
     <div class="aud-card" id="audCard">
       <div class="aud-icon">
         <img id="audRatingIcon" src="assets/tv_parental_icon/TV-Y7.svg" alt="TV Parental Rating: TV-Y7" />

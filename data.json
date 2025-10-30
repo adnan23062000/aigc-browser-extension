@@ -59,7 +59,7 @@
       "followup_question": "What does this consensus mean regarding content credibility?",
       "about_accordion": {
         "title": "About this",
-        "body": "This summary is based on community comment signals, review text, and reported sources."
+        "body": " fddfg Hello lorem19 This summary is based on community comment signals, review text, and reported sources."
       }
     }
   },
@@ -92,6 +92,18 @@
       {
         "title": "The Hollywood Reporter",
         "url": "http://hollywoodreporter.com/"
+      },
+      {
+        "title": "Newsweek",
+        "url": "https://www.newsweek.com/"
+      },
+      {
+        "title": "YouTube Policy on AI-Generated Content",
+        "url": "https://support.google.com/youtube/answer/10835450"
+      },
+      {
+        "title": "George Carlin Estate Sues YouTube Channel Over AI-Generated Special",
+        "url": "https://www.hollywoodreporter.com/news/general-news/george-carlin-estate-sues-youtube-channel-ai-generated-special-1235594902/"
       }
     ]
   },

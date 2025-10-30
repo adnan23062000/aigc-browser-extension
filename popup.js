@@ -1,257 +1,475 @@
-(() => {
-  const DATA_URL = 'data.json';
+// popup.js
 
-  /* ---------- Small helpers ---------- */
-  const qs = (sel, root = document) => root.querySelector(sel);
-  const qid = (id) => document.getElementById(id);
-  const getVar = (name) =>
-    getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-  const normalize = (arr) => {
-    const total = arr.reduce(
-      (s, x) => s + (Number.isFinite(x.value) ? x.value : 0),
-      0
-    ) || 1;
-    return arr.map((x) => ({ ...x, pct: (x.value / total) * 100 }));
+// --------- Utilities ----------
+const qs = (sel, root = document) => root.querySelector(sel);
+const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+function pct(n, showPercent = true, precision = 0) {
+  if (typeof n !== 'number' || Number.isNaN(n)) return showPercent ? '0%' : '0';
+  const val = showPercent ? (n * 100) : n;
+  return showPercent ? `${val.toFixed(precision)}%` : `${val.toFixed(precision)}`;
+}
+
+function safeGetURL(path) {
+  try {
+    // Works inside extension and also as plain webpage
+    return (globalThis.chrome?.runtime?.getURL?.(path)) || path;
+  } catch {
+    return path;
+  }
+}
+
+// --------- Data Loader ----------
+async function loadData() {
+  const url = safeGetURL('data.json');
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to load data.json: ${res.status}`);
+  return res.json();
+}
+
+// --------- Banner ----------
+function applyBanner(data) {
+  const banner = qs('.banner');
+  const slogan = qs('.banner-slogan');
+  if (!banner || !slogan) return;
+
+  const trueText  = data?.banner_v2?.is_ai_generated_flag?.true_text  || 'This is an AI Generated Content';
+  const falseText = data?.banner_v2?.is_ai_generated_flag?.false_text || 'This is not an AI Generated Content';
+
+  const aiTrueBg  = data?.banner_v2?.styles?.ai_true_bg  || '#dc2626';
+  const aiFalseBg = data?.banner_v2?.styles?.ai_false_bg || '#16a34a';
+  const textColor = data?.banner_v2?.styles?.text_color  || '#ffffff';
+
+  if (data?.ai_generated) {
+    banner.classList.remove('banner--green');
+    banner.classList.add('banner--red');
+    banner.style.background = aiTrueBg;
+    slogan.textContent = trueText;
+  } else {
+    banner.classList.remove('banner--red');
+    banner.classList.add('banner--green');
+    banner.style.background = aiFalseBg;
+    slogan.textContent = falseText;
+  }
+  slogan.style.color = textColor;
+}
+
+// --------- Title ----------
+function applyTitle(title) {
+  const el = qs('#videoTitle');
+  if (el) el.textContent = title || '—';
+}
+
+// --------- Sentiment ----------
+function applySentiment(sentiment) {
+  const bar = qs('#sentimentBar');
+  const legend = qs('#sentimentLegend');
+  const tooltip = qs('#sentimentTooltip');
+  if (!bar || !legend) return;
+
+  const showPercent = !!sentiment?.format?.show_percent;
+  const precision = Number.isFinite(sentiment?.format?.precision) ? sentiment.format.precision : 0;
+
+  const pos = Number(sentiment?.positive) || 0;
+  const neu = Number(sentiment?.neutral) || 0;
+  const neg = Number(sentiment?.negative) || 0;
+
+  const labels = sentiment?.labels || { positive: 'Positive', neutral: 'Neutral', negative: 'Negative' };
+  const hints  = sentiment?.tooltip || {};
+
+  // Reset
+  bar.innerHTML = '';
+  legend.innerHTML = '';
+
+  // Create segments
+  const segments = [
+    { key: 'positive', value: pos, title: hints.positive || '', var: '--pos' },
+    { key: 'neutral',  value: neu, title: hints.neutral  || '', var: '--neu' },
+    { key: 'negative', value: neg, title: hints.negative || '', var: '--neg' },
+  ];
+
+  const total = pos + neu + neg || 1;
+
+  segments.forEach(({ key, value, title, var: v }) => {
+    const seg = document.createElement('span');
+    seg.className = 'progress-seg';
+    const widthPct = (value / total) * 100;
+    seg.style.width = `${widthPct}%`;
+    seg.style.background = getComputedStyle(document.documentElement).getPropertyValue(v) || '#ddd';
+    seg.setAttribute('aria-label', `${labels[key]} ${pct(value, true, precision)}`);
+    seg.dataset.key = key;
+
+    // tooltip handlers
+    seg.addEventListener('mousemove', (e) => {
+      if (!tooltip) return;
+      tooltip.textContent = title || `${labels[key]}: ${pct(value, true, precision)}`;
+      tooltip.style.left = `${e.clientX}px`;
+      tooltip.style.top = `${e.clientY}px`;
+      tooltip.classList.add('show');
+    });
+    seg.addEventListener('mouseleave', () => tooltip?.classList.remove('show'));
+
+    bar.appendChild(seg);
+  });
+
+  // Legend
+  const mkLegend = (name, val, cls) => {
+    const d = document.createElement('div');
+    d.className = `legend-item ${cls}`;
+    d.innerHTML = `<b>${labels[name] || name}</b>${pct(val, showPercent, precision)}`;
+    return d;
+  };
+  legend.appendChild(mkLegend('positive', pos, 'pos'));
+  legend.appendChild(mkLegend('neutral',  neu, 'neu'));
+  legend.appendChild(mkLegend('negative', neg, 'neg'));
+}
+
+/* ===================== Info Popover (singleton) ===================== */
+let activePopover = null;
+let activeAnchor = null;
+let hideTimer = null;
+
+function ensurePopover() {
+  let el = document.getElementById('catInfoPopover');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'catInfoPopover';
+    el.className = 'info-popover';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-live', 'polite');
+    document.body.appendChild(el);
+
+    // Keep open while hovering popover; hide on leave
+    el.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+    el.addEventListener('mouseleave', scheduleHide);
+  }
+  return el;
+}
+
+function positionPopover(popover, anchor) {
+  const rect = anchor.getBoundingClientRect();
+  const margin = 8;
+  const pad = 8; // viewport padding
+  const vw = window.innerWidth;
+  const popW = popover.offsetWidth || 260;
+  const popH = popover.offsetHeight || 60;
+
+  // Ideal: centered above anchor
+  let left = rect.left + (rect.width / 2) - (popW / 2);
+  let top  = rect.top - popH - margin;
+
+  // Clamp horizontally
+  const clampedLeft = Math.max(pad, Math.min(left, vw - popW - pad));
+  popover.style.left = `${clampedLeft}px`;
+  popover.style.top  = `${Math.max(pad, top)}px`;
+
+  // Arrow side based on clamping
+  popover.classList.remove('arrow-left', 'arrow-right');
+  if (clampedLeft !== left) {
+    if (clampedLeft > left) {
+      // shifted rightward because left edge was too small -> arrow at left
+      popover.classList.add('arrow-left');
+    } else {
+      // shifted leftward because right edge overflowed -> arrow at right
+      popover.classList.add('arrow-right');
+    }
+  }
+}
+
+function showPopover(anchor, text) {
+  const pop = ensurePopover();
+  pop.textContent = text || 'No details available.';
+  pop.classList.add('show');
+
+  requestAnimationFrame(() => positionPopover(pop, anchor));
+
+  activePopover = pop;
+  activeAnchor = anchor;
+
+  document.addEventListener('click', onDocClick, true);
+  document.addEventListener('keydown', onEsc, true);
+  window.addEventListener('resize', onReposition, { passive: true });
+  window.addEventListener('scroll', onReposition, { passive: true });
+}
+
+function scheduleHide() {
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(() => hidePopover(), 120);
+}
+
+function hidePopover() {
+  if (!activePopover) return;
+  activePopover.classList.remove('show');
+  activePopover = null;
+  activeAnchor = null;
+
+  document.removeEventListener('click', onDocClick, true);
+  document.removeEventListener('keydown', onEsc, true);
+  window.removeEventListener('resize', onReposition);
+  window.removeEventListener('scroll', onReposition);
+}
+
+function onDocClick(e) {
+  if (!activePopover) return;
+  if (activePopover.contains(e.target) || activeAnchor?.contains(e.target)) return;
+  hidePopover();
+}
+function onEsc(e) {
+  if (e.key === 'Escape') hidePopover();
+}
+function onReposition() {
+  if (activePopover && activeAnchor) positionPopover(activePopover, activeAnchor);
+}
+
+// --------- Categorization (Badge + Thermo) ----------
+function applyCategorization(cat) {
+  const badge = qs('#catBadge');
+  const thermo = qs('#catThermo');
+  const pointerEl = qs('#catPointer');
+  if (!thermo || !badge) return;
+
+  // Badge text
+  const label = cat?.label || '—';
+  badge.textContent = label;
+
+  // Create or reuse info button
+  let infoButton = qs('#catInfoBtn');
+  if (!infoButton) {
+    infoButton = document.createElement('button');
+    infoButton.className = 'info-btn';
+    infoButton.id = 'catInfoBtn';
+    infoButton.setAttribute('aria-label', 'More info');
+    badge.appendChild(infoButton);
+  } else {
+    badge.appendChild(infoButton);
+  }
+
+  // Replace "i" with icon image
+  infoButton.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = 'assets/info.png';
+  img.alt = 'Info';
+  img.style.width = '14px';
+  img.style.height = '14px';
+  img.style.display = 'block';
+  infoButton.appendChild(img);
+
+  // Info text
+  const infoText = cat?.information_icon || cat?.ui?.info_tooltip || 'No details available.';
+
+  // Bind hover + click once
+  if (!infoButton._bound) {
+    infoButton._bound = true;
+
+    // Hover: show; leaving button schedules hide to allow move to popover
+    infoButton.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer);
+      showPopover(infoButton, infoText);
+    });
+    infoButton.addEventListener('mouseleave', scheduleHide);
+
+    // Click: also show (and prevent bubbling)
+    infoButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearTimeout(hideTimer);
+      showPopover(infoButton, infoText);
+    });
+  }
+
+  // Color class for badge
+  badge.classList.remove('safe', 'neutral', 'unsafe');
+  const scale = (cat?.scale || '').toLowerCase();
+  if (['safe', 'neutral', 'unsafe'].includes(scale)) badge.classList.add(scale);
+
+  // Scale labels
+  const labels = cat?.ui?.risk_gauge?.scale_labels ?? ['Unsafe', 'Neutral', 'Safe'];
+  const ticks = qsa('.scale-labels .tick');
+  ticks.forEach((t, i) => {
+    t.textContent = labels[i] ?? t.textContent;
+  });
+
+  // Pointer position
+  const pointer = Number.isFinite(cat?.ui?.risk_gauge?.pointer)
+    ? cat.ui.risk_gauge.pointer
+    : (Number.isFinite(cat?.score) ? cat.score : 0.5);
+
+  if (pointerEl) {
+    const pctLeft = Math.max(0, Math.min(1, pointer)) * 100;
+    pointerEl.style.left = `${pctLeft}%`;
+  }
+}
+
+// --------- Consensus (Summary + Inline See more) ----------
+function applyConsensus(cons) {
+  const sectionHeading = qsa('.comment-summary-wide .section-heading')[0];
+  if (sectionHeading) {
+    sectionHeading.textContent = cons?.ui?.section_title || 'Summary of the Community is thinking about';
+  }
+
+  const label = qs('#csLabel');
+  const summary = qs('#csSummary');
+  if (label)   label.textContent = cons?.label || '—';
+  if (!summary) return;
+
+  // Hide old button if present
+  const oldBtn = qs('#csToggle');
+  if (oldBtn) oldBtn.style.display = 'none';
+
+  const shortText = cons?.summary || '—';
+  const fullText  = cons?.full_summary || shortText;
+
+  let isExpanded = false;
+
+  const renderSummary = () => {
+    summary.textContent = isExpanded ? fullText : shortText;
+
+    // Only show link if different
+    if (fullText !== shortText) {
+      const link = document.createElement('span');
+      link.className = 'see-more';
+      link.id = 'seeMoreLink';
+      link.textContent = isExpanded ? ' See less' : ' See more';
+      summary.appendChild(link);
+
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isExpanded = !isExpanded;
+        renderSummary();
+      });
+    }
   };
 
-  /* ---------- Data loader ---------- */
-  async function loadData() {
-    const res = await fetch(DATA_URL, { cache: 'no-store' });
-    return res.json();
+  renderSummary();
+
+  // About accordion
+  applyAboutAccordion(cons?.ui?.about_accordion);
+}
+
+function applyAboutAccordion(about) {
+  const aboutSection = qs('.cs-about');
+  if (!aboutSection) return;
+
+  const summaryEl = aboutSection.querySelector('summary');
+  const bodyEl = aboutSection.querySelector('p');
+
+  const title = about?.title ?? 'About this';
+  const body  = about?.body  ?? 'No details available.';
+
+  if (summaryEl) summaryEl.textContent = title;
+  if (bodyEl)    bodyEl.textContent = body;
+}
+
+// --------- Risks ----------
+function applyRisks(data) {
+  const riskWrap = qs('.cs-risk-wide');
+  const riskTitleEl = riskWrap?.querySelector('h4');
+  const riskBody = qs('#csRisk');
+  const expandBtn = qs('#riskExpand');
+  const extra = qs('#riskExtra');
+
+  if (riskTitleEl) {
+    riskTitleEl.textContent = data?.risk_panel?.title || 'Risk Patterns in the Content';
+  }
+  if (riskBody) {
+    // Prefer main "risks" text; fallback to risk_panel.content_scripts
+    riskBody.textContent = data?.risks || data?.risk_panel?.content_scripts || '—';
   }
 
-  /* ---------- Banner ---------- */
-  function applyBanner(data) {
-    const banner = qs('.banner');
-    const textEl = qs('.banner-slogan');
-    if (!banner || !textEl) return;
-
-    const isAI = Boolean(data?.ai_generated);
-    const msg = data?.ai_banner_text || '';
-
-    textEl.textContent = msg;
-    banner.classList.remove('banner--red', 'banner--green');
-
-    if (isAI) {
-      banner.classList.add('banner--red');
-      document.body.classList.remove('ui-disabled');
-    } else {
-      banner.classList.add('banner--green');
-      document.body.classList.add('ui-disabled');
-    }
-
-    // Video title
-    const titleEl = qid('videoTitle');
-    if (titleEl && data?.title) titleEl.textContent = data.title;
-  }
-
-  /* ---------- Sentiment ---------- */
-  function renderSentiment(data) {
-    const s = data?.sentiment || {};
-    const barEl = qid('sentimentBar');
-    const legendEl = qid('sentimentLegend');
-    const tipEl = qid('sentimentTooltip');
-    if (!barEl || !legendEl || !tipEl) return;
-
-    const segments = [
-      {
-        key: 'positive',
-        label: 'Positive',
-        value: s.positive ?? 0,
-        color: getVar('--pos'),
-        extra: s.tooltip?.positive || '',
-      },
-      {
-        key: 'neutral',
-        label: 'Neutral',
-        value: s.neutral ?? 0,
-        color: getVar('--neu'),
-        extra: s.tooltip?.neutral || '',
-      },
-      {
-        key: 'negative',
-        label: 'Negative',
-        value: s.negative ?? 0,
-        color: getVar('--neg'),
-        extra: s.tooltip?.negative || '',
-      },
-    ];
-
-    barEl.innerHTML = '';
-    const norm = normalize(segments);
-    norm.forEach((d) => {
-      const seg = document.createElement('button');
-      seg.className = 'progress-seg';
-      seg.type = 'button';
-      seg.style.width = d.pct + '%';
-      seg.style.background = d.color;
-      seg.setAttribute(
-        'aria-label',
-        `${d.label} ${Math.round(d.pct)} percent`
-      );
-      seg.dataset.label = d.label;
-      seg.dataset.percent = `${Math.round(d.pct)}%`;
-      if (d.extra) seg.dataset.extra = d.extra;
-
-      seg.addEventListener('pointerenter', (e) => showTip(e, tipEl));
-      seg.addEventListener('pointerleave', () => hideTip(tipEl));
-      seg.addEventListener('pointermove', (e) => moveTip(e, tipEl));
-      barEl.appendChild(seg);
+  if (expandBtn && extra) {
+    expandBtn.addEventListener('click', () => {
+      extra.classList.toggle('show');
+      expandBtn.textContent = extra.classList.contains('show')
+        ? '▲ Hide typical viewer responses'
+        : '▼ See how viewers generally address these risks';
     });
 
-    const ln = norm.map((d) => ({ ...d, p: Math.round(d.pct) }));
-    legendEl.innerHTML = `
-      <div class="legend-item pos"><b>${ln[0].p}%</b>Positive</div>
-      <div class="legend-item neu"><b>${ln[1].p}%</b>Neutral</div>
-      <div class="legend-item neg"><b>${ln[2].p}%</b>Negative</div>
-    `;
+    // Initialize with panel copy if available
+    extra.textContent = data?.risk_panel?.content_scripts 
+      || 'Viewers typically respond by reporting misleading content, adding clarifying comments, or referencing credible sources to reduce misinformation.';
+  }
+}
+
+// --------- Links / References (merged & deduped) ----------
+function applyLinks(data) {
+  const wrap  = document.querySelector('.cs-links');
+  const title = document.querySelector('.cs-links-title');
+  const list  = document.querySelector('#csLinks');
+  if (!wrap || !title || !list) return;
+
+  const refNote = data?.references?.note || 'Related references and citations provided by community:';
+
+  // Merge arrays: references.list + links
+  const refs = Array.isArray(data?.references?.list) ? data.references.list : [];
+  const lnks = Array.isArray(data?.links) ? data.links : [];
+  const merged = [...refs, ...lnks].filter(item => item && item.title && item.url);
+
+  // Dedupe by normalized URL (case-insensitive, trailing slash removed)
+  const seen = new Set();
+  const unique = [];
+  for (const item of merged) {
+    const norm = String(item.url).trim().replace(/\/+$/,'').toLowerCase();
+    if (seen.has(norm)) continue;
+    seen.add(norm);
+    unique.push(item);
   }
 
-  // Tooltip helpers
-  function showTip(e, tip) {
-    const t = e.currentTarget;
-    const extra = t.dataset.extra ? ` · ${t.dataset.extra}` : '';
-    tip.textContent = `${t.dataset.label} — ${t.dataset.percent}${extra}`;
-    tip.classList.add('show');
-    tip.setAttribute('aria-hidden', 'false');
-    moveTip(e, tip);
-  }
-  function hideTip(tip) {
-    tip.classList.remove('show');
-    tip.setAttribute('aria-hidden', 'true');
-  }
-  function moveTip(e, tip) {
-    const offset = 16;
-    tip.style.left = `${e.clientX}px`;
-    tip.style.top = `${e.clientY - offset}px`;
-  }
+  title.textContent = refNote;
+  list.innerHTML = '';
 
-  /* ---------- Categorization (Horizontal) ---------- */
-  function applyCategorization(cat) {
-    const pointer = qid('catPointer');
-    const badge = qid('catBadge');
-    if (!pointer || !badge) return;
+  // Render all links (no cap)
+  const frag = document.createDocumentFragment();
+  unique.forEach(item => {
+    const li = document.createElement('li');
+    const a  = document.createElement('a');
+    a.href = item.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = item.title;
+    li.appendChild(a);
+    frag.appendChild(li);
+  });
+  list.appendChild(frag);
 
-    const score = clamp(Number(cat?.score ?? 0), 0, 1);
-    const scale = String(cat?.scale || '').toLowerCase();
-    const label = cat?.label || 'Unknown';
+  console.info(`Rendered ${unique.length} reference link(s).`);
+}
 
-    // horizontal positioning (0 = left / Safe, 1 = right / Unsafe)
-    const x = score * 100;
-    pointer.style.left = `${x}%`;
+// --------- Audience ----------
+function applyAudience(aud) {
+  const icon = qs('#audRatingIcon');
+  const seg  = qs('#audSegment');
 
-    badge.classList.remove('safe', 'neutral', 'unsafe');
-    const variant = scale === 'safe' || scale === 'neutral' ? scale : 'unsafe';
-    badge.classList.add(variant);
-    badge.textContent = label;
+  const rating = (aud?.rating || 'TV-Y').toUpperCase();
+  const iconPath = `assets/tv_parental_icon/${rating}.svg`;
 
-    // Info button tooltip
-    const infoBtn = qid('catInfoBtn');
-    if (infoBtn && cat?.information_icon) {
-      infoBtn.title = cat.information_icon;
-    }
-  }
-  window.updateCategorization = (nextCat) => applyCategorization(nextCat);
-
-  /* ---------- Audience ---------- */
-  function applyAudience(aud) {
-    const icon = qid('audRatingIcon');
-    const segEl = qid('audSegment');
-    if (!icon || !segEl) return;
-
-    const rating = String(aud?.rating || 'TV-Y7').trim();
-    const segment = String(aud?.segment || '').trim();
-
-    icon.src = `assets/tv_parental_icon/${rating}.svg`;
+  if (icon) {
+    icon.src = iconPath;
     icon.alt = `TV Parental Rating: ${rating}`;
-    segEl.textContent = segment;
   }
-  window.updateAudience = (nextAudience) => applyAudience(nextAudience);
-
-  /* ---------- Comment Summary ---------- */
-  function applyCommentSummary({ consensus = {}, risks = '', links = [] } = {}) {
-    const labelEl = qid('csLabel');
-    const summaryEl = qid('csSummary');
-    const toggleEl = qid('csToggle');
-    const riskEl = qid('csRisk');
-    const linksEl = qid('csLinks');
-    if (!labelEl || !summaryEl || !toggleEl || !riskEl || !linksEl) return;
-
-    const label = consensus?.label || '—';
-    const summary = consensus?.summary || '';
-    const fullSummary = consensus?.full_summary || '';
-
-    labelEl.textContent = label;
-    summaryEl.textContent = summary;
-
-    let expanded = false;
-    toggleEl.onclick = () => {
-      expanded = !expanded;
-      toggleEl.setAttribute('aria-expanded', String(expanded));
-      toggleEl.classList.toggle('active', expanded);
-      toggleEl.textContent = expanded ? 'Show Less' : 'Show Full Summary';
-      summaryEl.textContent = expanded && fullSummary ? fullSummary : summary;
-    };
-
-    // Risks section
-    // Risks section
-    riskEl.textContent = risks || '';
-
-    const riskExpand = qid('riskExpand');
-    const riskExtra = qid('riskExtra');
-
-    if (riskExpand) {
-      riskExpand.onclick = () => {
-        const isVisible = riskExtra.classList.toggle('show');
-        // Change arrow direction dynamically
-        if (isVisible) {
-          riskExpand.textContent = '▲ Hide how viewers address these risks';
-        } else {
-          riskExpand.textContent = '▼ See how viewers generally address these risks';
-        }
-        console.log('Risk section toggled:', isVisible);
-      };
-    }
-
-
-    // Links section
-    linksEl.innerHTML = '';
-    (Array.isArray(links) ? links : []).forEach((l) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = l?.url || '#';
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = l?.title || 'Resource';
-      li.appendChild(a);
-      linksEl.appendChild(li);
-    });
+  if (seg) {
+    seg.textContent = aud?.segment || '—';
   }
-  window.updateCommentSummary = (next) => applyCommentSummary(next || {});
 
-  /* ---------- Bootstrap ---------- */
-  (async function init() {
-    try {
-      const data = await loadData();
-      applyBanner(data);
-      renderSentiment(data);
-      applyCategorization(data?.categorization);
-      applyAudience(data?.audience);
-      applyCommentSummary({
-        consensus: data?.consensus,
-        risks: data?.risks,
-        links: data?.links,
-      });
-    } catch (err) {
-      console.error('Failed to load data.json', err);
-    }
-  })();
+  // Optional: section title (if you later want to wire it)
+  // const sectionTitle = qsa('.audience-block-wide .section-heading')[0];
+  // if (sectionTitle) sectionTitle.textContent = aud?.copy?.section_title || 'This Content is appropriate for:';
+}
 
+// --------- Boot ----------
+(async function init() {
+  try {
+    const data = await loadData();
 
+    applyTitle(data?.title);
+    applyBanner(data);
+    applySentiment(data?.sentiment);
+    applyCategorization(data?.categorization);
+    applyConsensus(data?.consensus);
+    applyRisks(data);
+    applyLinks(data);
+    applyAudience(data?.audience);
 
-
-  
+    console.info('AIGC popup initialized successfully.');
+  } catch (err) {
+    console.error('Failed to initialize AIGC popup:', err);
+  }
 })();
-
-

@@ -3,14 +3,19 @@
   font-family: 'Poppins', sans-serif;
 }
 
-html,
-body {
-  width: 410px;
-  height: 610px;
+
+html, body {
+  width: 100%;
+  height: 100%;
   margin: 0;
-  background: #fff;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;                 /* <-- was hidden */
+  scrollbar-gutter: stable both-edges;
+}
+
+#app, .popup-root {
+  min-height: 100%;               /* <-- was height:100% */
+  overflow: visible;               /* <-- was overflow:auto */
+  box-sizing: border-box;
 }
 
 /* ================= Header ================= */
@@ -27,22 +32,22 @@ body {
 }
 
 .ytlogo {
-  width: 28px;
-  height: 20px;
+  width: 20px;
+  height: 12px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .ailogo {
-  width: 34px;
-  height: 36px;
+  width: 26px;
+  height: 28px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 #videoTitle {
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #111827;
   margin: 0;
@@ -53,20 +58,17 @@ body {
 
 /* ================= Banner ================= */
 .banner {
-  width: 100%;
+  width: calc(100% - 8px); /* reduce width for 4px each side */
+  margin: 0 4px; /* balanced horizontal margin */
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.3s ease;
+  border-radius: 6px;
 }
 
-.banner--red {
-  background: #dc2626;
-}
-
-.banner--green {
-  background: #16a34a;
-}
+.banner--red { background: #dc2626; }
+.banner--green { background: #16a34a; }
 
 .banner-slogan {
   margin: 0;
@@ -79,12 +81,11 @@ body {
 
 /* Divider */
 .divider-line {
-  width: 90%;
+  width: calc(100% - 8px);
   height: 1px;
   background-color: #ccc;
-  margin: 0 auto;
+  margin: 4px auto;
 }
-
 
 /* ================== Top Insight Row ================== */
 .top-insight-row {
@@ -92,47 +93,51 @@ body {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 0 8px 0 8px;
+  padding: 0 4px; /* side spacing */
   width: 100%;
   box-sizing: border-box;
 }
 
+/* Card containers inside top row */
 .top-insight-row .user-sentiment,
 .top-insight-row .content-categorization {
   flex: 1 1 0;
   min-width: 0;
-  padding: 8px 10px;
+  padding: 5px 7px;
+  margin: 0 2px;
+  border-radius: 7px;
+  transform: scale(0.93);
+  transform-origin: top center;
 }
 
-/* ================= General Sentiment ================= */
-.user-sentiment {
-  width: 100%;
-}
-
-.section-heading {
+/* Make inner elements smaller only within top-insight-row */
+.top-insight-row .section-heading {
   font-weight: 700;
-  font-size: 12px;
-  margin: 0;
   color: #111827;
   text-align: center;
-  margin-bottom: 8px;
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
 }
 
-.progress-wrapper {
+.top-insight-row .progress-wrapper {
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: 4px;
+  transform: scale(0.9);
+  transform-origin: top center;
 }
 
-.progress-bar {
+.top-insight-row .progress-bar {
   position: relative;
-  height: 22px;
+  height: 15px;
   width: 100%;
   background: var(--track-bg, #f4f6f8);
-  border-radius: 8px;
+  border-radius: 5px;
   overflow: hidden;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, .08);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .06);
 }
 
 .progress-seg {
@@ -142,11 +147,13 @@ body {
   padding: 0;
 }
 
-.progress-legend {
+.top-insight-row .progress-legend {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  font-size: 12px;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: bold;
 }
 
 .legend-item {
@@ -156,20 +163,12 @@ body {
 
 .legend-item b {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
 }
 
-.legend-item.pos b {
-  color: #16a34a;
-}
-
-.legend-item.neu b {
-  color: #9ca3af;
-}
-
-.legend-item.neg b {
-  color: #ef4444;
-}
+.legend-item.pos b { color: #16a34a; }
+.legend-item.neu b { color: #9ca3af; }
+.legend-item.neg b { color: #ef4444; }
 
 .sentiment-tooltip {
   position: fixed;
@@ -177,33 +176,27 @@ body {
   pointer-events: none;
   background: #e5e7eb;
   color: #111827;
-  font-size: 10px;
-  padding: 3px 5px;
-  border-radius: 6px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, .12);
-  transform: translate(-50%, -125%);
+  font-size: 8.5px;
+  padding: 2px 4px;
+  border-radius: 5px;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, .12);
+  transform: translate(-50%, -115%);
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.12s ease;
 }
 
-.sentiment-tooltip.show {
-  opacity: 1;
-}
+.sentiment-tooltip.show { opacity: 1; }
 
-/* ================= Categorization (Horizontal) ================= */
-.content-categorization {
-  width: 100%;
-}
-
-/* Layout: badge → bar → labels stacked cleanly */
+/* ================= Content Categorization ================= */
 .cat-horizontal {
   display: grid;
   grid-template-columns: 1fr;
   grid-auto-rows: max-content;
-  row-gap: 8px;
+  row-gap: 6px;
   width: 100%;
   align-items: start;
+  padding: 0 4px; /* added side spacing */
 }
 
 /* Badge */
@@ -211,9 +204,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  font-size: 12px;
-  padding: 6px 10px;
+  gap: 6px;
+  font-size: 11px;
+  padding: 4px 8px;
   border-radius: 10px;
   font-weight: 700;
   text-align: center;
@@ -221,36 +214,70 @@ body {
   background: #fecaca;
   max-width: 100%;
   line-height: 1;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
+.cat-badge.safe    { color: #065f46; background: #bbf7d0; }
+.cat-badge.neutral { color: #92400e; background: #fde68a; }
+.cat-badge.unsafe  { color: #7f1d1d; background: #fecaca; }
 
-.cat-badge.safe {
-  color: #065f46;
-  background: #bbf7d0;
+/* =============== Info Popover =============== */
+.info-popover {
+  position: fixed;
+  z-index: 10000;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity .14s ease, transform .14s ease;
 }
-
-.cat-badge.neutral {
-  color: #92400e;
-  background: #fde68a;
+.info-popover.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
-
-.cat-badge.unsafe {
-  color: #7f1d1d;
-  background: #fecaca;
+.info-popover::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #f3f4f6;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.12));
 }
+.info-popover.arrow-left::before { left: 12px; transform: none; }
+.info-popover.arrow-right::before { left: auto; right: 12px; transform: none; }
 
-/* Info button inside badge */
 .info-btn {
   border: none;
-  background: #fff;
-  color: #111827;
-  font-weight: 700;
-  border-radius: 50%;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
   width: 16px;
   height: 16px;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info-btn img {
+  width: 14px;
+  height: 14px;
+  display: block;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.info-btn:hover img {
+  transform: scale(1.1);
+  opacity: 0.85;
 }
 
 /* --- Thermo bar (3-band) + labels layout --- */
@@ -258,113 +285,66 @@ body {
   position: relative;
   width: 100%;
   display: grid;
-  grid-template-rows: 10px auto;
+  grid-template-rows: 8px auto;
   grid-template-columns: repeat(3, 1fr);
-  row-gap: 6px;
+  row-gap: 4px;
   border-radius: 999px;
 }
+.cat-thermo-horizontal .band { height: 8px; grid-row: 1; }
+.cat-thermo-horizontal .band:first-child { border-radius: 999px 0 0 999px; }
 
-
-/* Bands make the rounded pill together */
-.cat-thermo-horizontal .band {
-  height: 10px;
-}
-
-.cat-thermo-horizontal .band:first-child {
-  border-radius: 999px 0 0 999px;
-}
-
-
-/* Colors */
-.band.unsafe {
-  background: #ef4444;
-}
-
-/* red */
-.band.neutral {
-  background: #fde047;
-}
-
-/* yellow */
-.band.safe {
+.band.unsafe  { background: #ef4444; }
+.band.neutral { background: #fde047; }
+.band.safe    {
   background: #16a34a;
-
   border-top-right-radius: 990px;
-  /* top corner */
   border-bottom-right-radius: 990px;
-  /* bottom corner */
 }
 
-/* green */
-
-/* Place all three bands on row-1 */
-.cat-thermo-horizontal .band {
-  grid-row: 1;
-}
-
-/* Indicator sits above the bar and is positioned by JS via left:% */
 .cat-thermo-horizontal .indicator {
   position: absolute;
   top: 0;
   z-index: 3;
   transform: none;
 }
-
 .cat-thermo-horizontal .dot {
   display: block;
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 10px solid #111827;
-  /* ▼ point down */
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 9px solid #111827;
   border-bottom: none;
-  transform: translate(-50%, -8px);
-  /* pull it up so the tip kisses the bar */
+  transform: translate(-50%, -7px);
   filter: drop-shadow(0 0 1px #ffffff);
 }
 
-/* Labels on row-2, full width */
 .scale-labels {
   grid-row: 2;
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-  /* font-weight: 700; */
+  gap: 5px;
+  font-size: 10px;
   line-height: 1;
   white-space: nowrap;
+  font-weight: bold;
+  padding: 0 4px; /* added slight spacing */
 }
+.scale-labels .tick { flex: 1 1 33.33%; text-align: center; }
+.tick.unsafe { color: #ef4444; }
+.tick.neutral { color: #d97706; }
+.tick.safe { color: #16a34a; }
 
-.scale-labels .tick {
-  flex: 1 1 33.33%;
-  text-align: center;
-}
-
-.tick.unsafe {
-  color: #ef4444;
-}
-
-.tick.neutral {
-  color: #d97706;
-}
-
-.tick.safe {
-  color: #16a34a;
-}
-
-/* --- Optional: tiny tweak for very small widths --- */
 @media (max-width: 380px) {
-  .scale-labels {
-    font-size: 10px;
-  }
+  .scale-labels { font-size: 10px; }
 }
 
 /* ================= Comment Summary ================= */
 .comment-summary-wide {
-  width: 100%;
-  padding: 12px 16px;
+  width: calc(100% - 8px);
+  padding: 6px 10px 10px; /* reduced LR padding */
+  margin: 0 4px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -387,9 +367,7 @@ body {
   gap: 6px;
 }
 
-#csLabel {
-  font-weight: 700;
-}
+#csLabel { font-weight: 700; }
 
 .cs-body {
   padding: 0 10px 0 12px;
@@ -398,27 +376,19 @@ body {
   color: #111827;
   text-align: justify;
 }
+.cs-body p { margin: 0; }
 
-.cs-body p {
-  margin: 0;
-}
-
-.cs-btn {
-  display: block;
-  margin: 0 auto 5px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  background: #e5e7eb;
-  color: #374151;
-  font-weight: 700;
+.see-more {
+  color: #2563eb;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 12px;
+  margin-left: 6px;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
-
-.cs-btn.active {
-  background: #111827;
-  color: #fff;
+.see-more:hover {
+  color: #1e40af;
+  text-decoration: underline;
 }
 
 .cs-about {
@@ -426,14 +396,8 @@ body {
   color: #6b7280;
   margin: 0 0 10px 10px;
   transition: transform 0.2s ease;
-  /* smooth hover animation */
 }
-
-/* Hover effect */
-.cs-about:hover {
-  cursor: pointer;
-  /* zoom-in cursor icon */
-}
+.cs-about:hover { cursor: pointer; }
 
 /* ================= Risk Section ================= */
 .cs-risk-wide {
@@ -444,19 +408,20 @@ body {
   padding: 10px 12px;
   font-weight: 700;
   font-size: 12px;
+  margin: 0 4px; /* side margin */
 }
-
 .cs-risk-wide h4 {
   margin: 0 0 4px;
   font-size: 13px;
   font-weight: 700;
 }
-
 .cs-risk-wide p {
+  font-size: 12px;
+  color: black;
+  font-weight: normal;
   margin: 0 0 8px;
   line-height: 1.4;
 }
-
 .risk-expand-btn {
   background: transparent;
   border: none;
@@ -470,35 +435,25 @@ body {
   gap: 4px;
   transition: color 0.2s ease;
 }
-
-.risk-expand-btn:hover {
-  color: #b91c1c;
-}
-
+.risk-expand-btn:hover { color: #b91c1c; }
 .risk-extra {
   display: none;
-  /* hidden by default */
   margin-top: 8px;
   font-weight: 500;
   font-size: 12px;
   color: #7f1d1d;
   line-height: 1.4;
 }
-
-.risk-extra.show {
-  display: block;
-  /* visible when expanded */
-}
-
+.risk-extra.show { display: block; }
 
 /* ================= Related Links ================= */
 .cs-links {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
   overflow: hidden;
   background: #fff;
+  margin: 0 4px;
 }
-
 .cs-links-title {
   background: #f8fafc;
   padding: 8px 10px;
@@ -506,7 +461,6 @@ body {
   font-size: 12px;
   color: #111827;
 }
-
 .cs-links-list {
   list-style: none;
   margin: 0;
@@ -515,7 +469,6 @@ body {
   gap: 4px;
   flex-wrap: wrap;
 }
-
 .cs-links-list li a {
   display: inline-block;
   padding: 6px 8px;
@@ -530,13 +483,12 @@ body {
 
 /* ================= Audience Block ================= */
 .audience-block-wide {
-  width: 100%;
-  padding: 6px 8px 10px;
+  width: calc(100% - 8px);
+  padding: 0px 6px 10px;
+  margin: 0 4px;
 }
-
 .aud-card {
   margin: 0 auto;
-  /* horizontally center */
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -547,8 +499,6 @@ body {
   background: #fff;
   box-shadow: 0 4px 10px rgba(17, 24, 39, .06);
 }
-
-
 .aud-icon {
   background: #0b0b0b;
   display: grid;
@@ -557,24 +507,19 @@ body {
   border-top-left-radius: 9px;
   border-bottom-left-radius: 9px;
 }
-
 .aud-icon img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-
 .aud-segment {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* vertical center */
   align-items: center;
-  /* horizontal center */
   text-align: center;
   width: 100%;
 }
-
 .aud-segment span {
   font-weight: 700;
   font-size: 12px;
@@ -582,18 +527,22 @@ body {
   display: block;
 }
 
-
 /* ================= Footer ================= */
 .powered-footer {
   text-align: center;
-  /* padding: 8px 0 16px; */
-  padding: 0;
+  padding: 0 6px;
   font-size: 12px;
   color: #6b7280;
 }
+.powered-footer strong { color: #111827; }
 
-.powered-footer strong {
-  color: #111827;
+/* === Tighten space above Summary heading === */
+.comment-summary-wide {
+  padding: 6px 10px 10px;
+}
+.comment-summary-wide > h3:first-child,
+.comment-summary-wide > h4:first-child {
+  margin-top: 0;
 }
 
 /* Color Vars */
