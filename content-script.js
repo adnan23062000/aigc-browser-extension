@@ -1,4 +1,3 @@
-// content-script.js
 (() => {
   const OVERLAY_ID = "aigc-overlay";
   const IFRAME_ID  = "aigc-iframe";
@@ -16,7 +15,6 @@
     }
   }
 
-  /* ---------- styles: top-right anchored panel ---------- */
   function ensureStyles() {
     if (document.getElementById("aigc-overlay-style")) return;
     const css = `
@@ -75,7 +73,7 @@
     document.documentElement.appendChild(style);
   }
 
-  /* ---------- scrollbar width measurement (robust) ---------- */
+
   function getViewportScrollbarWidth() {
     return Math.max(0, window.innerWidth - document.documentElement.clientWidth);
   }
@@ -101,7 +99,6 @@
 
   window.addEventListener('resize', updateScrollbarPadding);
 
-  /* ---------- overlay DOM ---------- */
   function createOverlay() {
     if (document.getElementById(OVERLAY_ID)) return;
     ensureStyles();
@@ -121,7 +118,6 @@
     iframe.id = IFRAME_ID;
     iframe.src = chrome.runtime.getURL("popup.html");
 
-    // Force inner scrolling inside the iframe after it loads
     iframe.addEventListener('load', () => {
       try {
         const doc = iframe.contentDocument;
@@ -150,35 +146,32 @@
     overlay.appendChild(wrap);
 
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) hideOverlay(); // backdrop click to close
+      if (e.target === overlay) hideOverlay(); 
     });
     window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") hideOverlay();   // Esc to close
+      if (e.key === "Escape") hideOverlay();   
     });
 
     document.documentElement.appendChild(overlay);
-    updateScrollbarPadding(); // set initial gutter
+    updateScrollbarPadding(); 
   }
 
   function showOverlay() {
     createOverlay();
     document.getElementById(OVERLAY_ID)?.classList.add("show");
-    updateScrollbarPadding(); // ensure fresh measurement on open
+    updateScrollbarPadding(); 
   }
 
   function hideOverlay() {
     document.getElementById(OVERLAY_ID)?.classList.remove("show");
   }
 
-  /* ---------- open/close via messages ---------- */
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg?.type === "SHOW_AIGC_OVERLAY") showOverlay();
     if (msg?.type === "HIDE_AIGC_OVERLAY") hideOverlay();
   });
 
-  /* ---------- auto-on when ai_generated === true ---------- */
   (async () => {
     if (await shouldShowOverlay()) showOverlay();
   })();
 })();
-/* ---------- end of content-script.js ---------- */

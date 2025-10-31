@@ -16,14 +16,12 @@
 </head>
 
 <body>
-  <!-- =================== Header =================== -->
   <header class="header">
     <img src="assets/youtube.png" alt="YouTube Logo" class="ytlogo" />
     <img src="assets/ai.png" alt="AI Logo" class="ailogo" />
     <h2 id="videoTitle">"I'm Glad I'm Dead" Full Special – Fake George Carlin</h2>
   </header>
 
-  <!-- =================== Banner =================== -->
   <section class="banner">
     <p class="banner-slogan">This is an AI Generated Content</p>
   </section>
@@ -31,23 +29,20 @@
   <!-- =================== Top Insight Row (Sentiment + Categorization) =================== -->
   <section class="top-insight-row">
 
-    <!-- ===== Left: Sentiment ===== -->
-    <section class="user-sentiment compact">
+    <!-- <section class="user-sentiment compact">
       <h3 class="section-heading">General Viewers Sentiment</h3>
       <div class="progress-wrapper">
         <div class="progress-bar" id="sentimentBar"></div>
         <div class="progress-legend" id="sentimentLegend" aria-hidden="false"></div>
       </div>
-    </section>
+    </section> -->
 
-    <div id="sentimentTooltip" class="sentiment-tooltip" aria-hidden="true"></div>
+    <!-- <div id="sentimentTooltip" class="sentiment-tooltip" aria-hidden="true"></div> -->
 
-    <!-- ===== Right: Content Categorization ===== -->
     <section class="content-categorization compact">
-      <h3 class="section-heading">This Content is a</h3>
+      <h3 class="section-heading">Content Category</h3>
       <div class="cat-horizontal">
         <div class="cat-badge" id="catBadge">
-          Falsified Content
           <button class="info-btn" id="catInfoBtn" aria-label="More info">i</button>
         </div>
 
@@ -69,6 +64,7 @@
       </div>
     </section>
 
+
   </section>
 
   <div class="divider-line"></div>
@@ -79,29 +75,25 @@
 
     <article class="cs-card" aria-labelledby="csHeading">
       <header class="cs-header" style="background-color: 	#5279cf;color: white;">
-        <span id="csHeading">Generated Consensus:</span>
-        <strong id="csLabel">High (Negative)</strong>
+        <span id="csHeading">Community Consensus about the Content</span>
       </header>
 
-      <!-- See more link is now inline inside cs-body -->
       <p class="cs-body" id="csSummary">
-        Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist’s voice and craft.
         <span class="see-more" id="seeMoreLink">See more</span>
       </p>
-
-      <!-- removed the old button: #csToggle -->
-
-      <details class="cs-about">
-        <summary>About this</summary>
-        <p>This summary is based on community comment signals, review text, and reported sources.</p>
-      </details>
     </article>
+  </section>
 
-    <!-- =================== Risks =================== -->
-    <aside class="cs-risk-wide">
-      <h4>Risk Patterns in the Content</h4>
-      <p id="csRisk">
-        exploitation of a deceased artist’s likeness, misleading provenance (is it “AI” or human-written + voice
+
+  <!-- =================== Risk Patterns Section =================== -->
+  <section class="comment-summary-wide">
+    <article class="cs-card" aria-labelledby="csRiskHeading">
+      <header class="cs-header" style="background-color: 	#5279cf;color: white;">
+        <span id="csRiskHeading">Risk Patterns in the Content</span>
+      </header>
+
+      <p class="cs-body" id="csRisk">
+        Exploitation of a deceased artist’s likeness, misleading provenance (is it “AI” or human-written + voice
         clone?), and mass reuploads for engagement.
       </p>
       <button class="risk-expand-btn" id="riskExpand">
@@ -112,18 +104,23 @@
         Viewers typically respond by reporting misleading content, adding clarifying comments, or referencing credible
         sources to reduce misinformation.
       </div>
-    </aside>
+    </article>
+  </section>
 
-    <!-- =================== Related Links =================== -->
-    <section class="cs-links">
-      <div class="cs-links-title">Related references and citations provided by community:</div>
+
+  <!-- =================== Related References Section =================== -->
+  <section class="comment-summary-wide">
+    <article class="cs-card" aria-labelledby="csLinksHeading">
+      <header class="cs-header" style="background-color: #5279cf; color: white;">
+        <span id="csLinksHeading">Related references and citations provided by community</span>
+      </header>
+
       <ul class="cs-links-list" id="csLinks"></ul>
-    </section>
+    </article>
   </section>
 
   <div class="divider-line"></div>
 
-  <!-- =================== Audience =================== -->
   <section class="audience-block-wide">
     <h3 class="section-heading" style="font-size: 13px; font-weight: bold;">This Content is appropriate for:</h3>
     <div class="aud-card" id="audCard">

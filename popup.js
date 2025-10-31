@@ -1,6 +1,3 @@
-// popup.js
-
-// --------- Utilities ----------
 const qs = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -12,7 +9,6 @@ function pct(n, showPercent = true, precision = 0) {
 
 function safeGetURL(path) {
   try {
-    // Works inside extension and also as plain webpage
     return (globalThis.chrome?.runtime?.getURL?.(path)) || path;
   } catch {
     return path;
@@ -77,11 +73,9 @@ function applySentiment(sentiment) {
   const labels = sentiment?.labels || { positive: 'Positive', neutral: 'Neutral', negative: 'Negative' };
   const hints  = sentiment?.tooltip || {};
 
-  // Reset
   bar.innerHTML = '';
   legend.innerHTML = '';
 
-  // Create segments
   const segments = [
     { key: 'positive', value: pos, title: hints.positive || '', var: '--pos' },
     { key: 'neutral',  value: neu, title: hints.neutral  || '', var: '--neu' },
@@ -139,7 +133,6 @@ function ensurePopover() {
     el.setAttribute('aria-live', 'polite');
     document.body.appendChild(el);
 
-    // Keep open while hovering popover; hide on leave
     el.addEventListener('mouseenter', () => clearTimeout(hideTimer));
     el.addEventListener('mouseleave', scheduleHide);
   }
@@ -149,28 +142,23 @@ function ensurePopover() {
 function positionPopover(popover, anchor) {
   const rect = anchor.getBoundingClientRect();
   const margin = 8;
-  const pad = 8; // viewport padding
+  const pad = 8; 
   const vw = window.innerWidth;
   const popW = popover.offsetWidth || 260;
   const popH = popover.offsetHeight || 60;
 
-  // Ideal: centered above anchor
   let left = rect.left + (rect.width / 2) - (popW / 2);
   let top  = rect.top - popH - margin;
 
-  // Clamp horizontally
   const clampedLeft = Math.max(pad, Math.min(left, vw - popW - pad));
   popover.style.left = `${clampedLeft}px`;
   popover.style.top  = `${Math.max(pad, top)}px`;
 
-  // Arrow side based on clamping
   popover.classList.remove('arrow-left', 'arrow-right');
   if (clampedLeft !== left) {
     if (clampedLeft > left) {
-      // shifted rightward because left edge was too small -> arrow at left
       popover.classList.add('arrow-left');
     } else {
-      // shifted leftward because right edge overflowed -> arrow at right
       popover.classList.add('arrow-right');
     }
   }
@@ -232,7 +220,6 @@ function applyCategorization(cat) {
   const label = cat?.label || '—';
   badge.textContent = label;
 
-  // Create or reuse info button
   let infoButton = qs('#catInfoBtn');
   if (!infoButton) {
     infoButton = document.createElement('button');
@@ -244,7 +231,6 @@ function applyCategorization(cat) {
     badge.appendChild(infoButton);
   }
 
-  // Replace "i" with icon image
   infoButton.innerHTML = '';
   const img = document.createElement('img');
   img.src = 'assets/info.png';
@@ -254,21 +240,17 @@ function applyCategorization(cat) {
   img.style.display = 'block';
   infoButton.appendChild(img);
 
-  // Info text
   const infoText = cat?.information_icon || cat?.ui?.info_tooltip || 'No details available.';
 
-  // Bind hover + click once
   if (!infoButton._bound) {
     infoButton._bound = true;
 
-    // Hover: show; leaving button schedules hide to allow move to popover
     infoButton.addEventListener('mouseenter', () => {
       clearTimeout(hideTimer);
       showPopover(infoButton, infoText);
     });
     infoButton.addEventListener('mouseleave', scheduleHide);
 
-    // Click: also show (and prevent bubbling)
     infoButton.addEventListener('click', (e) => {
       e.stopPropagation();
       clearTimeout(hideTimer);
@@ -276,19 +258,16 @@ function applyCategorization(cat) {
     });
   }
 
-  // Color class for badge
   badge.classList.remove('safe', 'neutral', 'unsafe');
   const scale = (cat?.scale || '').toLowerCase();
   if (['safe', 'neutral', 'unsafe'].includes(scale)) badge.classList.add(scale);
 
-  // Scale labels
   const labels = cat?.ui?.risk_gauge?.scale_labels ?? ['Unsafe', 'Neutral', 'Safe'];
   const ticks = qsa('.scale-labels .tick');
   ticks.forEach((t, i) => {
     t.textContent = labels[i] ?? t.textContent;
   });
 
-  // Pointer position
   const pointer = Number.isFinite(cat?.ui?.risk_gauge?.pointer)
     ? cat.ui.risk_gauge.pointer
     : (Number.isFinite(cat?.score) ? cat.score : 0.5);
@@ -299,7 +278,6 @@ function applyCategorization(cat) {
   }
 }
 
-// --------- Consensus (Summary + Inline See more) ----------
 function applyConsensus(cons) {
   const sectionHeading = qsa('.comment-summary-wide .section-heading')[0];
   if (sectionHeading) {
@@ -311,7 +289,6 @@ function applyConsensus(cons) {
   if (label)   label.textContent = cons?.label || '—';
   if (!summary) return;
 
-  // Hide old button if present
   const oldBtn = qs('#csToggle');
   if (oldBtn) oldBtn.style.display = 'none';
 
@@ -323,7 +300,6 @@ function applyConsensus(cons) {
   const renderSummary = () => {
     summary.textContent = isExpanded ? fullText : shortText;
 
-    // Only show link if different
     if (fullText !== shortText) {
       const link = document.createElement('span');
       link.className = 'see-more';
@@ -341,7 +317,6 @@ function applyConsensus(cons) {
 
   renderSummary();
 
-  // About accordion
   applyAboutAccordion(cons?.ui?.about_accordion);
 }
 
@@ -359,7 +334,6 @@ function applyAboutAccordion(about) {
   if (bodyEl)    bodyEl.textContent = body;
 }
 
-// --------- Risks ----------
 function applyRisks(data) {
   const riskWrap = qs('.cs-risk-wide');
   const riskTitleEl = riskWrap?.querySelector('h4');
@@ -371,7 +345,6 @@ function applyRisks(data) {
     riskTitleEl.textContent = data?.risk_panel?.title || 'Risk Patterns in the Content';
   }
   if (riskBody) {
-    // Prefer main "risks" text; fallback to risk_panel.content_scripts
     riskBody.textContent = data?.risks || data?.risk_panel?.content_scripts || '—';
   }
 
@@ -383,13 +356,11 @@ function applyRisks(data) {
         : '▼ See how viewers generally address these risks';
     });
 
-    // Initialize with panel copy if available
     extra.textContent = data?.risk_panel?.content_scripts 
       || 'Viewers typically respond by reporting misleading content, adding clarifying comments, or referencing credible sources to reduce misinformation.';
   }
 }
 
-// --------- Links / References (merged & deduped) ----------
 function applyLinks(data) {
   const wrap  = document.querySelector('.cs-links');
   const title = document.querySelector('.cs-links-title');
@@ -398,12 +369,10 @@ function applyLinks(data) {
 
   const refNote = data?.references?.note || 'Related references and citations provided by community:';
 
-  // Merge arrays: references.list + links
   const refs = Array.isArray(data?.references?.list) ? data.references.list : [];
   const lnks = Array.isArray(data?.links) ? data.links : [];
   const merged = [...refs, ...lnks].filter(item => item && item.title && item.url);
 
-  // Dedupe by normalized URL (case-insensitive, trailing slash removed)
   const seen = new Set();
   const unique = [];
   for (const item of merged) {
@@ -449,9 +418,6 @@ function applyAudience(aud) {
     seg.textContent = aud?.segment || '—';
   }
 
-  // Optional: section title (if you later want to wire it)
-  // const sectionTitle = qsa('.audience-block-wide .section-heading')[0];
-  // if (sectionTitle) sectionTitle.textContent = aud?.copy?.section_title || 'This Content is appropriate for:';
 }
 
 // --------- Boot ----------
