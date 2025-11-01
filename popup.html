@@ -17,10 +17,10 @@
 
 <body>
   <header class="header">
-    <img src="assets/youtube.png" alt="YouTube Logo" class="ytlogo" />
-    <img src="assets/ai.png" alt="AI Logo" class="ailogo" />
     <h2 id="videoTitle">"I'm Glad I'm Dead" Full Special – Fake George Carlin</h2>
   </header>
+
+  <div class="divider-line"></div>
 
   <!-- <section class="banner">
     <p class="banner-slogan">This is an AI Generated Content</p>
@@ -39,39 +39,10 @@
 
     <!-- <div id="sentimentTooltip" class="sentiment-tooltip" aria-hidden="true"></div> -->
 
-    <section class="content-categorization compact">
-      <h3 class="section-heading" style="font-size: 12px;">Content<br>Category</h3>
-      <div class="cat-horizontal">
-        <div class="cat-badge" id="catBadge">
-          <button class="info-btn" id="catInfoBtn" aria-label="More info">i</button>
-        </div>
-
-        <div class="cat-thermo-horizontal" id="catThermo">
-          <div class="band unsafe"></div>
-          <div class="band neutral"></div>
-          <div class="band safe"></div>
-
-          <div class="indicator" id="catPointer">
-            <span class="dot"></span>
-          </div>
-
-          <div class="scale-labels">
-            <span class="tick unsafe">Unsafe</span>
-            <span class="tick neutral">Neutral</span>
-            <span class="tick safe">Safe</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
   </section>
 
-  <div class="divider-line"></div>
-
-  <!-- =================== Comment Summary =================== -->
   <section class="comment-summary-wide">
-    <h3 class="section-heading" style="padding: 0; margin: 0;font-weight: bold; font-size: 12px;">Summary of the Community is thinking about</h3>
+    <h3 class="section-heading" style="align-content: center; margin: 0;font-weight: bold; font-size: 12px;">Community Notes on the Content being AIGC</h3>
 
     <article class="cs-card" aria-labelledby="csHeading">
       <header class="cs-header" style="background-color: 	#5279cf;color: white;">
@@ -112,17 +83,47 @@
   <!-- Left: References -->
   <section class="comment-summary-wide">
     <article class="cs-card" aria-labelledby="csLinksHeading">
-      <header class="cs-header">
-        <span id="csLinksHeading">Related references and citations</span>
+      <header class="cs-header" style="background-color: 	#5279cf;color: white;">
+        <span id="csLinksHeading">Community-provided references and citations</span>
       </header>
       <ul class="cs-links-list" id="csLinks"></ul>
     </article>
   </section>
 
+    <div class="divider-line"></div>
+
+  <section class="content-categorization compact">
+      <h3 class="section-heading" style="font-size: 12px; margin: 12px;">Content<br>Category</h3>
+      <div class="cat-horizontal">
+        <div class="cat-badge" id="catBadge">
+          <button class="info-btn" id="catInfoBtn" aria-label="More info">i</button>
+        </div>
+
+        <div class="cat-thermo-horizontal" id="catThermo">
+          <div class="band unsafe"></div>
+          <div class="band neutral"></div>
+          <div class="band safe"></div>
+
+          <div class="indicator" id="catPointer">
+            <span class="dot"></span>
+          </div>
+
+          <div class="scale-labels">
+            <span class="tick unsafe">Unsafe</span>
+            <span class="tick neutral">Neutral</span>
+            <span class="tick safe">Safe</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider-line"></div>
+
+
   <!-- Right: Audience -->
-  <section class="audience-block-wide">
-    <h3 class="section-heading" style="padding-left: 10px;">This Content is appropriate for:</h3>
-    <div class="aud-card" id="audCard">
+  <section class="content-categorization-compact">
+    <h3 class="section-heading" style="font-size: 12px; margin: 12px;">This Content is appropriate for:</h3>
+    <div class="aud-card" id="audCard" style="margin: 10px;">
       <div class="aud-icon">
         <img id="audRatingIcon" src="assets/tv_parental_icon/TV-Y7.svg" alt="TV Parental Rating: TV-Y7" />
       </div>
@@ -132,6 +133,8 @@
     </div>
   </section>
 </section>
+
+<div class="divider-line"></div>
 
 
   <!-- =================== Footer =================== -->

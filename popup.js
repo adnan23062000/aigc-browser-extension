@@ -35,7 +35,6 @@ function applyCategorization(data) {
   const label = category || '—';
   badge.textContent = label;
 
-  // ---------------- Category meaning lookup ----------------
   const categoryMeanings = {
     // Positive
     "Educational": "Content providing learning or informative value.",
@@ -45,7 +44,7 @@ function applyCategorization(data) {
     "AI Personalized Content": "Content tailored and customized by AI for individuals for personalized use.",
 
     // Negative
-    "Impersonation": "Content mimicking someone without their consent.",
+    "Impersonation": "Mimicking someone without their consent.",
     "Appropriated Likeness": "Unauthorized use of someone's identity or image.",
     "Non-consensual Intimate Imagery": "Sharing intimate content without consent.",
     "IP Infringement": "Violation of intellectual property rights.",
@@ -56,7 +55,6 @@ function applyCategorization(data) {
 
   const infoText = categoryMeanings[category] || 'No specific information available for this category.';
 
-  // Info button
   let infoButton = qs('#catInfoBtn');
   if (!infoButton) {
     infoButton = document.createElement('button');
@@ -64,12 +62,17 @@ function applyCategorization(data) {
     infoButton.id = 'catInfoBtn';
     badge.appendChild(infoButton);
   }
-  infoButton.textContent = 'i';
+  
+
+  infoButton.innerHTML = ''; 
+  const infoIcon = document.createElement('img');
+  infoIcon.src = './assets/info.png';
+  infoIcon.alt = 'Info';
+  infoButton.appendChild(infoIcon);
   infoButton.title = infoText;
 
-  // Tooltip
-  infoButton.addEventListener('mouseenter', () => showPopover(infoButton, infoText));
-  infoButton.addEventListener('mouseleave', hidePopover);
+  infoButton.onmouseenter = () => showPopover(infoButton, infoText);
+  infoButton.onmousexit = hidePopover;
 
   // ---------------- Thermometer pointer logic ----------------
   if (pointerEl) {
@@ -83,10 +86,10 @@ function applyCategorization(data) {
       "IP Infringement", "Counterfeit", "Scaling & Amplification", "Targeting & Personalization"
     ];
 
-    let position = 50; // neutral by default
+    let position = 50; 
 
-    if (positiveCategories.includes(category)) position = 90;     // Safe zone (right)
-    else if (negativeCategories.includes(category)) position = 10; // Unsafe zone (left)
+    if (positiveCategories.includes(category)) position = 90;     
+    else if (negativeCategories.includes(category)) position = 10; 
 
     pointerEl.style.left = `${position}%`;
   }
@@ -121,7 +124,7 @@ function applyConsensus(data) {
   const summary = qs('#csSummary');
   if (!summary) return;
 
-  if (heading) heading.textContent = 'Summary of the Community is thinking about';
+  if (heading) heading.textContent = 'Community Notes regarding the Content being AIGC';
   const label = data.community_consensus || '—';
   const fullText = data.community_consensus_message || 'No summary available.';
 

@@ -119,8 +119,8 @@ html, body {
   font-size: 12px;
   padding: 0;
   margin: 0;
-  white-space: normal;     /* allow wrapping */
-  word-wrap: break-word;   /* break long words if needed */
+  white-space: normal;     
+  word-wrap: break-word;   
 }
 
 
@@ -486,8 +486,8 @@ html, body {
 
 .audience-block-wide {
   width: 100%;
-  padding: 4px 6px 8px;
-  margin: 0;
+  padding: 5px;
+  margin: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -510,6 +510,7 @@ html, body {
   align-items: center;
   justify-content: flex-start;
   min-height: 50px;
+  max-height: 50px;        
   border: 1px solid #000;
   border-radius: 8px;
   background: #fff;
@@ -520,20 +521,22 @@ html, body {
 
 .aud-icon {
   background: #0b0b0b;
-  width: 45px;             /* fixed icon width */
-  height: 100%;            /* match parent height */
+  width: 45px;             
+  height: 50px;            
   display: flex;
   align-items: center;
   justify-content: center;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   flex-shrink: 0;
+  padding: 4px;            
 }
 
 .aud-icon img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  padding: 2px;           
 }
 
 .aud-segment {
@@ -687,23 +690,24 @@ html, body {
 /* The inner wrapper becomes a horizontal aligner for badge + thermo */
 .cat-horizontal {
   display: flex;
-  align-items: center;      /* align badge with the thermo baseline */
+  align-items: center;      
   gap: 10px;
   min-width: 0;
-  flex: 1 1 auto;           /* let this area grow/shrink as needed */
+  flex: 1 1 auto;           
 }
 
 /* Thermo should stretch to fill the remaining space */
 .cat-thermo-horizontal {
   position: relative;
-  width: auto;              /* override 80%, let flex control width */
+  width: auto;             
   flex: 1 1 auto;
   display: grid;
   grid-template-rows: 8px auto;
+  margin-right: 10px;
   grid-template-columns: repeat(3, 1fr);
   row-gap: 4px;
   border-radius: 999px;
-  min-width: 120px;         /* avoid collapsing too small */
+  min-width: 120px;        
 }
 
 .cat-thermo-horizontal .band { height: 8px; grid-row: 1; }
