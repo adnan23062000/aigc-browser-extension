@@ -34,11 +34,11 @@
 
       .aigc-frame-wrap{
         position: relative;
-  position: relative;
-  width: 400px;
-  height: 600px;
-  max-width: min(400px, 94vw);
-  max-height: min(600px, 92vh);
+        position: relative;
+        width: 400px;
+        height: 600px;
+        max-width: min(400px, 94vw);
+        max-height: min(600px, 92vh);
         border-radius: 12px;
         overflow: hidden;
         background: #fff;

@@ -119,13 +119,20 @@ function hidePopover() {
 }
 
 // ---------- Community Consensus ----------
+// ---------- Community Consensus ----------
 function applyConsensus(data) {
-  const heading = qsa('.comment-summary-wide .section-heading')[0];
+  const heading = qs('#csHeading');
   const summary = qs('#csSummary');
   if (!summary) return;
 
-  if (heading) heading.textContent = 'Community Notes regarding the Content being AIGC';
-  const label = data.community_consensus || '—';
+  // Get the consensus value and format it
+  const consensusValue = data.community_consensus || 'Unknown';
+  
+  // Update the heading with formatted consensus
+  if (heading) {
+    heading.innerHTML = `Community Consensus about the Content: <span class="consensus-badge">${consensusValue}</span>`;
+  }
+  
   const fullText = data.community_consensus_message || 'No summary available.';
 
   let isExpanded = false;
