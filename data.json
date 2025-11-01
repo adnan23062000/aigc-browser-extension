@@ -51,8 +51,8 @@
   },
   "consensus": {
     "label": "AI Generated",
-    "summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist’s voice and craft.",
-    "full_summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to Carlin’s voice and craft. Community refs are mostly news/legal links calling out the release and lawsuit, not technical citations — refs present but external-media–driven. Example: The Guardian + Newsweek + The Hollywood Reporter.",
+    "summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to the artist's voice and craft.",
+    "full_summary": "Top comments overwhelmingly condemn the video as disrespectful/inauthentic to Carlin's voice and craft. Community refs are mostly news/legal links calling out the release and lawsuit, not technical citations — refs present but external-media–driven. Example: The Guardian + Newsweek + The Hollywood Reporter.",
     "ui": {
       "section_title": "Community Notes on the Content Being AIGC",
       "expandable": true,
@@ -80,7 +80,7 @@
   ],
   "risk_panel": {
     "title": "Risk Patterns in the Content",
-    "content_scripts": "Use of a deceased artist’s likeness Misleading provenance of content origin Mass reuploads for engagement"
+    "content_scripts": "Use of a deceased artist's likeness Misleading provenance of content origin Mass reuploads for engagement"
   },
   "references": {
     "note": "Related references and citations provided by community:",
@@ -103,3 +103,4 @@
     }
   }
 }
+

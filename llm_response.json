@@ -1,0 +1,8 @@
+{
+  "content_category": "Impersonation", 
+  "community_consensus": "AI Generated",
+  "community_consensus_message": "The majority of users believe the content is AI-generated, with many referencing its resemblance to George Carlin but noting discrepancies in voice and delivery. There is mixed sentiment regarding trustworthiness, with some appreciating the humor while others question the authenticity and emotional depth of the content.",
+  "relevant_references": ["https://www.youtube.com", "https://www.nytimes.com/"],
+  "risk_patterns": ["content theft: Unauthorized use of George Carlin's likeness and voice for AI content.", "Bot patterns: Some comments appear to be overly generic or repetitive, possibly suggesting automated user engagement.", "Exploitative monetization: There are concerns about monetizing AI-generated content, such as George Carlin's likeness being used for profit without consent."],
+  "age_appropriateness": "TV-PG"
+}
