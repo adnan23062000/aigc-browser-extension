@@ -8,7 +8,7 @@
       const url = chrome.runtime.getURL("data.json");
       const res = await fetch(url, { cache: "no-store" });
       const data = await res.json();
-      return Boolean(true);
+      return (data?.community_consensus === "AI Generated"); // trigger condition 
     } catch (e) {
       console.warn("[AIGC] data.json fetch failed", e);
       return false;
