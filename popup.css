@@ -119,7 +119,10 @@ html, body {
   font-size: 12px;
   padding: 0;
   margin: 0;
+  white-space: normal;     /* allow wrapping */
+  word-wrap: break-word;   /* break long words if needed */
 }
+
 
 .top-insight-row .progress-wrapper {
   margin-top: 10px;
@@ -198,7 +201,7 @@ html, body {
 }
 
 .content-categorization .section-heading {
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 700;
   margin-right: 20px;  
 }
@@ -207,15 +210,15 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 11px;
+  gap: 4px;
+  font-size: 10px;
   padding: 4px 8px;
   border-radius: 10px;
   font-weight: 700;
   text-align: center;
   color: #7f1d1d;
   background: #fecaca;
-  max-width: 100%;
+  max-width: 80%;
   line-height: 1;
   margin-bottom: 8px;
 }
@@ -284,7 +287,7 @@ html, body {
 
 .cat-thermo-horizontal {
   position: relative;
-  width: 100%;
+  width: 80%;
   display: grid;
   grid-template-rows: 8px auto;
   grid-template-columns: repeat(3, 1fr);
@@ -482,48 +485,71 @@ html, body {
 
 
 .audience-block-wide {
-  width: calc(100% - 8px);
-  padding: 0px 6px 10px;
-  margin: 0 4px;
+  width: 100%;
+  padding: 4px 6px 8px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  box-sizing: border-box;
 }
+
+.audience-block-wide .section-heading {
+  flex: 0 0 40%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  line-height: 1.4;
+}
+
 .aud-card {
-  margin: 0 auto;
+  flex: 0 0 60%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  min-height: 60px;
-  max-width: 220px;
+  min-height: 50px;
   border: 1px solid #000;
-  border-radius: 9px;
+  border-radius: 8px;
   background: #fff;
-  box-shadow: 0 4px 10px rgba(17, 24, 39, .06);
+  box-shadow: 0 2px 6px rgba(17, 24, 39, .05);
+  overflow: hidden;
+  box-sizing: border-box;
 }
+
 .aud-icon {
   background: #0b0b0b;
-  display: grid;
-  place-items: center;
-  padding: 4px 6px;
-  border-top-left-radius: 9px;
-  border-bottom-left-radius: 9px;
+  width: 45px;             /* fixed icon width */
+  height: 100%;            /* match parent height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  flex-shrink: 0;
 }
+
 .aud-icon img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
+
 .aud-segment {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 100%;
+  text-align: left;
+  padding: 0 8px;
+  flex: 1;
 }
+
 .aud-segment span {
   font-weight: 700;
   font-size: 12px;
   color: #111827;
-  display: block;
+  line-height: 1.3;
 }
 
 .powered-footer {
@@ -535,7 +561,7 @@ html, body {
 .powered-footer strong { color: #111827; }
 
 .comment-summary-wide {
-  padding: 6px 10px 10px;
+  padding: 2px 10px 10px;
 }
 .comment-summary-wide > h3:first-child,
 .comment-summary-wide > h4:first-child {
@@ -547,4 +573,190 @@ html, body {
   --pos: #16a34a;
   --neu: #9ca3af;
   --neg: #ef4444;
+}
+/* ===== Keep your existing styles (unchanged) ===== */
+.content-categorization .section-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin-right: 5px;
+
+}
+
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-align: center;
+  color: #7f1d1d;
+  background: #fecaca;
+  max-width: 80%;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.cat-badge.safe    { color: #065f46; background: #bbf7d0; }
+.cat-badge.neutral { color: #92400e; background: #fde68a; }
+.cat-badge.unsafe  { color: #7f1d1d; background: #fecaca; }
+
+.info-popover {
+  position: fixed;
+  z-index: 10000;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #111827;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity .14s ease, transform .14s ease;
+}
+.info-popover.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.info-popover::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #f3f4f6;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.12));
+}
+.info-popover.arrow-left::before { left: 12px; transform: none; }
+.info-popover.arrow-right::before { left: auto; right: 12px; transform: none; }
+
+.info-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.info-btn img {
+  width: 14px;
+  height: 14px;
+  display: block;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.info-btn:hover img {
+  transform: scale(1.1);
+  opacity: 0.85;
+}
+
+/* ===== New/updated layout rules for perfect horizontal alignment ===== */
+
+/* Make the whole block one horizontal row: [Heading] [Badge] [Thermo] */
+.content-categorization.compact {
+  display: flex;
+  align-items: center;      /* vertical centering across the row */
+  gap: 10px;                /* space between heading, badge, thermo */
+  min-width: 0;             /* allow thermo to shrink if needed */
+}
+
+/* Remove bottom margin under badge when used inline */
+.content-categorization.compact .cat-badge {
+  margin: 0;                /* overrides margin-bottom from original */
+  white-space: nowrap;      /* keep badge and its 'i' together */
+  flex: 0 0 auto;
+}
+
+/* Keep heading tight and inline */
+.content-categorization.compact .section-heading {
+  margin: 0;                /* no extra top/bottom space */
+  flex: 0 0 auto;
+}
+
+/* The inner wrapper becomes a horizontal aligner for badge + thermo */
+.cat-horizontal {
+  display: flex;
+  align-items: center;      /* align badge with the thermo baseline */
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;           /* let this area grow/shrink as needed */
+}
+
+/* Thermo should stretch to fill the remaining space */
+.cat-thermo-horizontal {
+  position: relative;
+  width: auto;              /* override 80%, let flex control width */
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-rows: 8px auto;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 4px;
+  border-radius: 999px;
+  min-width: 120px;         /* avoid collapsing too small */
+}
+
+.cat-thermo-horizontal .band { height: 8px; grid-row: 1; }
+.cat-thermo-horizontal .band:first-child { border-radius: 999px 0 0 999px; }
+
+.band.unsafe  { background: #ef4444; }
+.band.neutral { background: #fde047; }
+.band.safe    {
+  background: #16a34a;
+  border-top-right-radius: 990px;
+  border-bottom-right-radius: 990px;
+}
+
+.cat-thermo-horizontal .indicator {
+  position: absolute;
+  top: 0;
+  z-index: 3;
+  transform: none;
+}
+.cat-thermo-horizontal .dot {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 9px solid #111827;
+  border-bottom: none;
+  transform: translate(-50%, -7px);
+  filter: drop-shadow(0 0 1px #ffffff);
+}
+
+/* Labels line is locked to the full thermo width so ticks match bands */
+.scale-labels {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  display: grid;                 /* use grid for perfect thirds */
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: 5px;
+  font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
+  font-weight: bold;
+  padding: 0 4px;
+}
+.scale-labels .tick { text-align: center; }
+.tick.unsafe { color: #ef4444; }
+.tick.neutral { color: #d97706; }
+.tick.safe { color: #16a34a; }
+
+/* Small screens: keep everything on one line but allow tighter gaps */
+@media (max-width: 380px) {
+  .content-categorization.compact { gap: 8px; }
+  .cat-horizontal { gap: 8px; }
+  .scale-labels { font-size: 10px; }
 }
